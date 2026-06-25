@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Salary Report</h2>
+
+<table class="table table-bordered">
+
+    <tr>
+        <th>Worker</th>
+        <th>Total Salary</th>
+    </tr>
+
+    {% for worker, salary in workers_salary.items %}
+
+    <tr>
+        <td>{{ worker }}</td>
+        <td>₹{{ salary }}</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

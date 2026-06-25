@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Packages</h2>
+
+<a href="{% url 'package_add' %}"
+class="btn btn-primary mb-3">
+
+Add Package
+
+</a>
+
+<table class="table table-bordered">
+
+<tr>
+
+    <th>Name</th>
+    <th>Price</th>
+    <th>Action</th>
+
+</tr>
+
+{% for p in packages %}
+
+<tr>
+
+    <td>{{ p.name }}</td>
+
+    <td>{{ p.price }}</td>
+
+    <td>
+
+        <a href="{% url 'package_edit' p.id %}"
+        class="btn btn-warning">
+
+        Edit
+
+        </a>
+
+        <a href="{% url 'package_delete' p.id %}"
+        class="btn btn-danger">
+
+        Delete
+
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

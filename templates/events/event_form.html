@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-primary text-white">
+        <h3>Event Form</h3>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button class="btn btn-success">
+                Save
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
