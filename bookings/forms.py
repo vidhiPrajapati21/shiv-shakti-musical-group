@@ -13,6 +13,7 @@ class BookingForm(forms.ModelForm):
             'mobile',
             'address',
             'event',
+            'event_date',
             'sound_type',
             'custom_sound_count',
             'advance_payment',
@@ -50,6 +51,13 @@ class BookingForm(forms.ModelForm):
                 }
             ),
 
+            'event_date': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+
             'sound_type': forms.Select(
                 attrs={
                     'class': 'form-select'
@@ -77,4 +85,9 @@ class BookingForm(forms.ModelForm):
                 }
             ),
 
+            'payment_status': forms.Select(
+                attrs={
+                    'class': 'form-select'
+                }
+            ),
         }

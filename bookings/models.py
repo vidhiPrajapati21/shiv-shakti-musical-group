@@ -17,9 +17,16 @@ class Booking(models.Model):
         blank=True
     )
 
+    # Event Date
+    event_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
     SOUND_CHOICES = [
         ('2-Way', '2-Way'),
         ('3-Way', '3-Way'),
+        ('4-Way', '4-Way'),
         ('Custom', 'Custom'),
     ]
 
@@ -54,5 +61,9 @@ class Booking(models.Model):
         default='Pending'
     )
 
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
     def __str__(self):
-        return self.customer_name
+        return f"{self.customer_name} - {self.event_date}"
