@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
@@ -9,8 +6,11 @@ def user_login(request):
 
     if request.method == 'POST':
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        print("=" * 50)
+        print("Username:", username)
 
         user = authenticate(
             request,
@@ -18,11 +18,30 @@ def user_login(request):
             password=password
         )
 
+        print("Authenticated User:", user)
+
         if user is not None:
 
             login(request, user)
 
+            print("LOGIN SUCCESS")
+            print("Redirecting to Dashboard...")
+            print("=" * 50)
+
             return redirect('dashboard')
+
+        else:
+
+            print("LOGIN FAILED")
+            print("=" * 50)
+
+            return render(
+                request,
+                'login.html',
+                {
+                    'error': 'Invalid Username or Password'
+                }
+            )
 
     return render(request, 'login.html')
 
