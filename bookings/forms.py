@@ -14,6 +14,8 @@ class BookingForm(forms.ModelForm):
             'address',
             'event',
             'event_date',
+            'timing',              
+            'dholi',               
             'sound_type',
             'custom_sound_count',
             'advance_payment',
@@ -55,6 +57,20 @@ class BookingForm(forms.ModelForm):
                 attrs={
                     'type': 'date',
                     'class': 'form-control'
+                }
+            ),
+
+            # timing માટેનું Widget (Morning / Evening selection)
+            'timing': forms.Select(
+                attrs={
+                    'class': 'form-select'
+                }
+            ),
+
+            # dholi માટેનું Widget
+            'dholi': forms.Select(
+                attrs={
+                    'class': 'form-select'
                 }
             ),
 
