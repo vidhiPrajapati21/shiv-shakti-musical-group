@@ -15,7 +15,8 @@ class BookingForm(forms.ModelForm):
             'event',
             'event_date',
             'timing',              
-            'dholi',               
+            'dholi',      
+            'custom_dholi_count',  # કસ્ટમ ઢોલ સંખ્યા માટેનું નવું ફીલ્ડ
             'sound_type',
             'custom_sound_count',
             'advance_payment',
@@ -67,10 +68,18 @@ class BookingForm(forms.ModelForm):
                 }
             ),
 
-            # dholi માટેનું Widget
+            # dholi (સંખ્યા વિકલ્પો) માટેનું Widget
             'dholi': forms.Select(
                 attrs={
                     'class': 'form-select'
+                }
+            ),
+
+            # Custom Dholi Count માટેનું Widget
+            'custom_dholi_count': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Enter custom dhol count (if custom selected)'
                 }
             ),
 

@@ -23,7 +23,7 @@ class Booking(models.Model):
         blank=True
     )
 
-    # ૧. નવું ફીલ્ડ: Timing Choices (Morning / Evening)
+    # Timing Choices (Morning / Evening / Full Day)
     TIMING_CHOICES = [
         ('Morning', 'Morning'),
         ('Evening', 'Evening'),
@@ -36,17 +36,26 @@ class Booking(models.Model):
         default='Morning'
     )
 
-    # ૨. નવું ફીલ્ડ: Dholi (જરૂરિયાત મુજબ સેટ કરો)
-    # જો હા/ના રાખવું હોય તો Boolean, અથવા નામ લખવું હોય તો CharField
+    # Dholi Choices (સંખ્યા માટેના વિકલ્પો)
     DHOLI_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
+        ('No', 'No Dholi'),
+        ('2 Dholi', '2 Dholi'),
+        ('4 Dholi', '4 Dholi'),
+        ('6 Dholi', '6 Dholi'),
+        ('8 Dholi', '8 Dholi'),
+        ('Custom', 'Custom'),
     ]
 
     dholi = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=DHOLI_CHOICES,
         default='No'
+    )
+
+    # Custom Dholi Count (જો 'Custom' સિલેક્ટ કરો તો આમાં એન્ટ્રી થશે)
+    custom_dholi_count = models.IntegerField(
+        null=True,
+        blank=True
     )
 
     SOUND_CHOICES = [
