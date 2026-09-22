@@ -4,6 +4,9 @@ from .views import *
 from django.urls import path
 from .views import *
 
+from django.urls import path
+from . import views
+
 urlpatterns = [
 
     path(
@@ -41,5 +44,9 @@ urlpatterns = [
     whatsapp_booking,
     name='whatsapp_booking'
 ),
-
+    path(
+        'calendar/',
+        calendar_view,
+        name='calendar_view'
+    )
 ]

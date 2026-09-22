@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Calendar - Shiv Shakti Musical Group</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+    
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .header-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .calendar-card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: none;
+        }
+        /* FullCalendar Styling Tweaks */
+        .fc .fc-toolbar-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .fc .fc-button-primary {
+            background-color: #2a5298;
+            border-color: #2a5298;
+            border-radius: 6px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .fc .fc-button-primary:hover {
+            background-color: #1e3c72;
+            border-color: #1e3c72;
+        }
+        .fc .fc-button-primary:disabled {
+            background-color: #a5b4fc;
+            border-color: #a5b4fc;
+        }
+        .fc-daygrid-event {
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
+            font-size: 0.88rem !important;
+            font-weight: 500 !important;
+            border: none !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        .fc-daygrid-event:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .fc-col-header-cell {
+            background-color: #f8fafc;
+            padding: 10px 0 !important;
+            color: #475569;
+            font-weight: 600;
+        }
+        /* Event Categories Legend */
+        .legend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid px-4">
+    <!-- Header Section -->
+    <div class="header-card d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h3 class="m-0 fw-bold"><i class="bi bi-calendar3-event me-2"></i>Event Booking Calendar</h3>
+            <small class="text-light opacity-75">Shiv Shakti Musical Group Scheduling Dashboard</small>
+        </div>
+        <a href="{% url 'booking_list' %}" class="btn btn-light fw-bold shadow-sm px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Bookings
+        </a>
+    </div>
+
+    <!-- Main Calendar Card -->
+    <div class="calendar-card">
+        <!-- Legend Bar -->
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="legend-badge bg-primary text-white"><i class="bi bi-sun"></i> Day Event</span>
+            <span class="legend-badge bg-dark text-white"><i class="bi bi-moon-stars"></i> Night Event</span>
+            <span class="legend-badge text-white" style="background-color: #8b5cf6;"><i class="bi bi-music-note-beamed"></i> Full Day / Both</span>
+        </div>
+
+        <!-- Calendar Container -->
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- Event Details Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-info-circle me-2"></i>Booking Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-person-fill fs-3 text-primary me-3"></i>
+                    <div>
+                        <small class="text-muted d-block">Customer Name</small>
+                        <h6 class="mb-0 fw-bold fs-5" id="modalCustomer">-</h6>
+                    </div>
+                </div>
+                <hr>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <small class="text-muted d-block"><i class="bi bi-calendar-check me-1"></i> Date</small>
+                        <span class="fw-semibold" id="modalDate">-</span>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block"><i class="bi bi-clock me-1"></i> Timing</small>
+                        <span class="fw-semibold" id="modalTiming">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Django JSON Data -->
+{{ events_json|json_script:"events-data" }}
+
+<!-- JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var eventsElement = document.getElementById('events-data');
+        var eventsData = JSON.parse(eventsElement.textContent);
+
+        if (typeof eventsData === 'string') {
+            eventsData = JSON.parse(eventsData);
+        }
+
+        // Apply dynamic color coding based on event title/timing
+        eventsData.forEach(function(item) {
+            var titleLower = item.title.toLowerCase();
+            if (titleLower.includes('night')) {
+                item.backgroundColor = '#1e293b'; // Dark color
+                item.borderColor = '#1e293b';
+            } else if (titleLower.includes('day')) {
+                item.backgroundColor = '#2563eb'; // Blue color
+                item.borderColor = '#2563eb';
+            } else {
+                item.backgroundColor = '#7c3aed'; // Purple color
+                item.borderColor = '#7c3aed';
+            }
+        });
+
+        var eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listMonth'
+            },
+            events: eventsData,
+            eventClick: function(info) {
+                // Parse booking details from title string
+                var details = info.event.title.split(' - ');
+                var customer = details[0] || info.event.title;
+                var eventInfo = details[1] || '';
+
+                document.getElementById('modalCustomer').innerText = customer;
+                document.getElementById('modalDate').innerText = info.event.start.toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                });
+                document.getElementById('modalTiming').innerText = eventInfo || 'N/A';
+
+                eventModal.show();
+            }
+        });
+        
+        calendar.render();
+    });
+</script>
+
+</body>
+</html>

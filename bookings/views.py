@@ -1,19 +1,23 @@
+import json
+import os
+from urllib.parse import quote
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from django.conf import settings
 from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 
 from .models import Booking
 from .forms import BookingForm
 from events.models import Event
-from reportlab.lib.utils import ImageReader
-from django.conf import settings
-import os
-from django.shortcuts import redirect
-from urllib.parse import quote
 
+
+# ૧. તારીખ મુજબ સોર્ટ થયેલું Booking List View
 def booking_list(request):
 
-    bookings = Booking.objects.all()
+    # event_date મુજબ ક્રમમાં (Order By) લાવવા માટે
+    bookings = Booking.objects.all().order_by('event_date')
 
     search = request.GET.get('search')
     event_id = request.GET.get('event')
@@ -39,6 +43,30 @@ def booking_list(request):
         request,
         'bookings/booking_list.html',
         context
+    )
+
+
+# ૨. કેલેન્ડર વ્યુ (Calendar View) - નવું ઉમેરેલું ફંક્શન
+def calendar_view(request):
+    bookings = Booking.objects.all()
+    events = []
+
+    for booking in bookings:
+        if booking.event_date:
+            # Event name ને સુરક્ષિત રીતે String માં ફેરવો
+            event_name = str(booking.event) if booking.event else "Booking"
+            timing_text = booking.timing if hasattr(booking, 'timing') and booking.timing else ""
+            
+            events.append({
+                'title': f"{booking.customer_name} - {event_name} ({timing_text})",
+                'start': booking.event_date.strftime("%Y-%m-%d"),
+            })
+
+    events_json = json.dumps(events)
+    return render(
+        request,
+        'bookings/calendar.html',
+        {'events_json': events_json}
     )
 
 
@@ -109,6 +137,7 @@ def booking_delete(request, pk):
 
     return redirect('booking_list')
 
+
 def booking_invoice(request, pk):
 
     booking = get_object_or_404(
@@ -136,9 +165,6 @@ def booking_invoice(request, pk):
         'images',
         'logo.jpg'
     )
-
-    print(logo_path)
-    print(os.path.exists(logo_path))
 
     if os.path.exists(logo_path):
 
@@ -294,6 +320,8 @@ def booking_invoice(request, pk):
     )
 
     p.save()
+    return response
+
 
 def whatsapp_booking(request, pk):
 
@@ -323,5 +351,3 @@ Thank You
     )
 
     return redirect(whatsapp_url)
-
-    return response
